@@ -45,6 +45,9 @@ public class UserService {
     }
 
     public void loginValidation(User user) {
+        if (user.getName() == null) {
+            user.setName(user.getLogin());
+        }
         if (user.getLogin().contains(" ") || user.getLogin() == null) {
             log.error("Ошибка логина: {}", user.getLogin());
             throw new ValidationException("Ошибка логина. Он не должен быть пустым или включать в себя пробелы");
