@@ -15,15 +15,15 @@ public class UserService {
     private Map<Integer, User> userMap;
 
     public UserService() {
-        this.generatedId = 1;
+        this.generatedId = 0;
         this.userMap = new HashMap<>();
     }
 
     public User addUser(User user) {
         loginValidation(user);
+        generatedId++;
         user.setId(generatedId);
         userMap.put(generatedId, user);
-        generatedId++;
         log.info("Пользователь успешно добавлен: {}", user);
         return user;
     }

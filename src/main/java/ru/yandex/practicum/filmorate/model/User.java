@@ -2,12 +2,15 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 
 @Data
 public class User {
-    @Positive
+    @PositiveOrZero
     private int id;
     @Email
     private String email;
