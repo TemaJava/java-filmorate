@@ -16,15 +16,15 @@ public class FilmService {
     private Map<Integer, Film> filmMap;
 
     public FilmService() {
-        this.generatedId = 0;
+        this.generatedId = 1;
         this.filmMap = new HashMap<>();
     }
 
     public Film addFilm(Film film) {
         releaseDateValidation(film);
-        generatedId++;
         film.setId(generatedId);
         filmMap.put(generatedId, film);
+        generatedId++;
         log.info("Фильм успешно добавлен: {}", film);
         return film;
     }

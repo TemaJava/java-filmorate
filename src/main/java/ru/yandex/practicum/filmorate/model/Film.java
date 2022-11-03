@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Data
 public class Film {
-    @PositiveOrZero
+    @Positive
     private int id;
     @NotBlank
     private String name;
