@@ -6,10 +6,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -26,6 +23,7 @@ public class InMemoryFilmStorage implements FilmStorage{
         releaseDateValidation(film);
         generatedId++;
         film.setId(generatedId);
+        film.setLikes(new HashSet<>());
         filmMap.put(generatedId, film);
         log.info("Фильм успешно добавлен: {}", film);
         return film;

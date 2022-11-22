@@ -68,9 +68,12 @@ public class FilmService {
 
     public List<Film> getMostLikedFilms(int num) {
         List<Film> likedFilms = new ArrayList<>(storage.getAllFilms().values());
-        likedFilms.sort(Film.COMPARE_BY_COUNT);
+        likedFilms.sort(Film.COMPARE_BY_COUNT.reversed());
         List<Film> finalList = new ArrayList<>();
         for (int i = 0; i < num; i++) {
+            if (i==likedFilms.size()) {
+                return finalList;
+            }
             finalList.add(likedFilms.get(i));
         }
         return finalList;

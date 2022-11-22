@@ -5,10 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -25,6 +22,7 @@ public class InMemoryUserStorage implements UserStorage {
         loginValidation(user);
         generatedId++;
         user.setId(generatedId);
+        user.setFriends(new HashSet<>());
         userMap.put(generatedId, user);
         log.info("Пользователь успешно добавлен: {}", user);
         return user;
@@ -70,10 +68,10 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public void loginValidation(User user) {
-        if (user.getName() == null) {
+        if (user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
-        if (user.getLogin().contains(" ") || user.getLogin() == null) {
+        if (user.getLogin().contains(" ") || user.getLogin().isEmpty()) {
             log.error("Ошибка логина: {}", user.getLogin());
             throw new ValidationException("Ошибка логина. Он не должен быть пустым или включать в себя пробелы");
         }

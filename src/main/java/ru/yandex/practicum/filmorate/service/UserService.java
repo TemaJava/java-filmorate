@@ -39,41 +39,39 @@ public class UserService {
         }
     }
     public List<User> addFriend(int firstId, int secondId) {
-        if (storage.getAllUsers().containsKey(firstId) || storage.getAllUsers().containsKey(secondId)) {
-            if (!storage.getUserById(firstId).getFriends().contains(firstId)) {
-                storage.getUserById(firstId).getFriends().add(secondId);
-                storage.getUserById(secondId).getFriends().add(firstId);
-                log.info("Пользователи {} и {} добавлены в друзья",
-                        storage.getUserById(firstId), storage.getUserById(secondId));
-                return Arrays.asList(storage.getUserById(firstId), storage.getUserById(secondId));
-            } else {
-                log.error("Пользователи с id: {} и {} уже друзья", firstId, secondId);
-                throw new RuntimeException("Пользователи с id" + firstId + " и " + secondId + " уже друзья");
-            }
-        } else {
+        if (!storage.getAllUsers().containsKey(firstId) || !storage.getAllUsers().containsKey(secondId)) {
             log.error("Не найден пользователь с id: {} или {}", firstId, secondId);
             throw new NotFoundException("Не найден пользователь с id" + firstId + " или " + secondId);
         }
+        if (storage.getUserById(firstId).getFriends().contains(secondId)) {
+            log.error("Пользователи с id: {} и {} уже друзья", firstId, secondId);
+            throw new RuntimeException("Пользователи с id" + firstId + " и " + secondId + " уже друзья");
+        }
+        storage.getUserById(firstId).getFriends().add(secondId);
+        storage.getUserById(secondId).getFriends().add(firstId);
+        log.info("Пользователи {} и {} добавлены в друзья", storage.getUserById(firstId),
+                storage.getUserById(secondId));
+        return Arrays.asList(storage.getUserById(firstId), storage.getUserById(secondId));
     }
 
     public List<User> deleteFriend(int firstId, int secondId) {
-        if (storage.getAllUsers().containsKey(firstId) || storage.getAllUsers().containsKey(secondId)) {
-            if (storage.getUserById(firstId).getFriends().contains(firstId)) {
-                storage.getUserById(firstId).getFriends().remove(secondId);
-                storage.getUserById(secondId).getFriends().remove(firstId);
-                log.info("Пользователи {} и {} удалены из друзей",
-                        storage.getUserById(firstId), storage.getUserById(secondId));
-                return Arrays.asList(storage.getUserById(firstId), storage.getUserById(secondId));
-            } else {
-                log.error("Пользователи с id: {} и {} уже не являются друзьями", firstId, secondId);
-                throw new RuntimeException("Пользователи с id" + firstId + " и " +
-                        secondId + " уже не являются друзьями");
-            }
-        } else {
+        if (!storage.getAllUsers().containsKey(firstId) || !storage.getAllUsers().containsKey(secondId)) {
             log.error("Не найден пользователь с id: {} или {}", firstId, secondId);
             throw new NotFoundException("Не найден пользователь с id" + firstId + " или " + secondId);
         }
+        if (!storage.getUserById(firstId).getFriends().contains(secondId)) {
+            log.error("Пользователи с id: {} и {} уже не являются друзьями", firstId, secondId);
+            throw new RuntimeException("Пользователи с id" + firstId + " и " +
+                    secondId + " уже не являются друзьями");
+        }
+        storage.getUserById(firstId).getFriends().remove(secondId);
+        storage.getUserById(secondId).getFriends().remove(firstId);
+        log.info("Пользователи {} и {} удалены из друзей",
+                storage.getUserById(firstId), storage.getUserById(secondId));
+        return Arrays.asList(storage.getUserById(firstId), storage.getUserById(secondId));
     }
+
+
 
     public List<User> getUserFriends(int id) {
         if (storage.getAllUsers().containsKey(id)) {
@@ -90,9 +88,13 @@ public class UserService {
 
     public List<User> getAllCommonFriends(int firstId, int secondId){
         if (storage.getAllUsers().containsKey(firstId) || storage.getAllUsers().containsKey(secondId)) {
+            if (storage.getUserById(firstId).getFriends().size()==0 ||
+                    storage.getUserById(secondId).getFriends().size() == 0) {
+                return Collections.emptyList();
+            }
             List<Integer> firstFriends = new ArrayList<>(storage.getUserById(firstId).getFriends());
             List<Integer> secondFriends = new ArrayList<>(storage.getUserById(secondId).getFriends());
-            List<User> commonFriends = null;
+            List<User> commonFriends = new ArrayList<>();
             for (Integer friendId : firstFriends) {
                 if (secondFriends.contains(friendId)) {
                    commonFriends.add(storage.getUserById(friendId));
