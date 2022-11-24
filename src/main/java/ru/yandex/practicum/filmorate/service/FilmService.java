@@ -54,8 +54,8 @@ public class FilmService {
     }
 
     public Film deleteLike(int filmId, int userId) {
-        if (!storage.getAllFilms().containsKey(filmId)) {
-            log.error("Фильм с id {} не найден", filmId);
+        if (!storage.getAllFilms().containsKey(filmId) || userId <= 0) {
+            log.error("Фильм с id {} или пользователь с id {} не найден", filmId, userId);
             throw new NotFoundException("Фильм с id " + filmId + " не найден");
         }
         if (!storage.getFilmById(filmId).getLikes().contains(userId)) {
