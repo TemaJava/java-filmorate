@@ -87,24 +87,24 @@ public class UserService {
     }
 
     public List<User> getAllCommonFriends(int firstId, int secondId){
-        if (storage.getAllUsers().containsKey(firstId) || storage.getAllUsers().containsKey(secondId)) {
-            if (storage.getUserById(firstId).getFriends().size()==0 ||
-                    storage.getUserById(secondId).getFriends().size() == 0) {
-                return Collections.emptyList();
-            }
-            List<Integer> firstFriends = new ArrayList<>(storage.getUserById(firstId).getFriends());
-            List<Integer> secondFriends = new ArrayList<>(storage.getUserById(secondId).getFriends());
-            List<User> commonFriends = new ArrayList<>();
-            for (Integer friendId : firstFriends) {
-                if (secondFriends.contains(friendId)) {
-                   commonFriends.add(storage.getUserById(friendId));
-                }
-            }
-            log.info("Список общих друзей: " + commonFriends);
-            return commonFriends;
-        } else {
+        if (!storage.getAllUsers().containsKey(firstId) || !storage.getAllUsers().containsKey(secondId)) {
             log.error("Не найден пользователь с id: {} или {}", firstId, secondId);
             throw new NotFoundException("Не найден пользователь с id" + firstId + " или " + secondId);
         }
+        if (storage.getUserById(firstId).getFriends().size()==0 ||
+                storage.getUserById(secondId).getFriends().size() == 0) {
+                return new ArrayList<>();
+        }
+        List<Integer> firstFriends = new ArrayList<>(storage.getUserById(firstId).getFriends());
+        List<Integer> secondFriends = new ArrayList<>(storage.getUserById(secondId).getFriends());
+        List<User> commonFriends = new ArrayList<>();
+        for (Integer friendId : firstFriends) {
+            if (secondFriends.contains(friendId)) {
+                commonFriends.add(storage.getUserById(friendId));
+            }
+        }
+        log.info("Список общих друзей: " + commonFriends);
+        return commonFriends;
     }
 }
+

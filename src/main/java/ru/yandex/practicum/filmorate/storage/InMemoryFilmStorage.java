@@ -23,7 +23,7 @@ public class InMemoryFilmStorage implements FilmStorage{
         releaseDateValidation(film);
         generatedId++;
         film.setId(generatedId);
-        film.setLikes(new HashSet<>());
+        film.setLikes(filmMap.get(film.getId()).getLikes());
         filmMap.put(generatedId, film);
         log.info("Фильм успешно добавлен: {}", film);
         return film;
