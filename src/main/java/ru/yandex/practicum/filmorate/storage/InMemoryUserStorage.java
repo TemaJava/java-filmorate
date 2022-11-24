@@ -30,8 +30,8 @@ public class InMemoryUserStorage implements UserStorage {
 
     public User updateUser(User user) {
         loginValidation(user);
-        user.setFriends(userMap.get(user.getId()).getFriends());
         if (userMap.containsKey(user.getId())) {
+            user.setFriends(userMap.get(user.getId()).getFriends());
             userMap.replace(user.getId(), user);
             log.info("Пользователь успешно обновлен: {}", user);
             return user;

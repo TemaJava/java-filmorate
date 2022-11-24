@@ -23,7 +23,7 @@ public class InMemoryFilmStorage implements FilmStorage{
         releaseDateValidation(film);
         generatedId++;
         film.setId(generatedId);
-        film.setLikes(filmMap.get(film.getId()).getLikes());
+        film.setLikes(new HashSet<>());
         filmMap.put(generatedId, film);
         log.info("Фильм успешно добавлен: {}", film);
         return film;
@@ -43,6 +43,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     public Film updateFilm(Film film) {
         releaseDateValidation(film);
         if (filmMap.containsKey(film.getId())) {
+            film.setLikes(filmMap.get(film.getId()).getLikes());
             filmMap.replace(film.getId(), film);
             log.info("Фильм успешно обновлен: {}", film);
             return film;
