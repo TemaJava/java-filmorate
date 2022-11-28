@@ -15,7 +15,7 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserServiceInterface {
     private final InMemoryUserStorage storage;
     public User addUser(User user) {
         return storage.addUser(user);
@@ -71,8 +71,6 @@ public class UserService {
         return Arrays.asList(storage.getUserById(firstId), storage.getUserById(secondId));
     }
 
-
-
     public List<User> getUserFriends(int id) {
         if (storage.getAllUsers().containsKey(id)) {
             List<User> friends = new ArrayList<>();
@@ -86,7 +84,7 @@ public class UserService {
         }
     }
 
-    public List<User> getAllCommonFriends(int firstId, int secondId){
+    public List<User> getAllCommonFriends(int firstId, int secondId) {
         if (!storage.getAllUsers().containsKey(firstId) || !storage.getAllUsers().containsKey(secondId)) {
             log.error("Не найден пользователь с id: {} или {}", firstId, secondId);
             throw new NotFoundException("Не найден пользователь с id" + firstId + " или " + secondId);

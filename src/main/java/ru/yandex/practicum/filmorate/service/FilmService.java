@@ -14,7 +14,7 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FilmService {
+public class FilmService implements FilmServiceInterface {
     private final InMemoryFilmStorage storage;
 
     public Film addFilm(Film film) {

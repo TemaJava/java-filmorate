@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -10,9 +11,10 @@ import java.util.*;
 
 @Slf4j
 @Component
+@Repository
 public class InMemoryFilmStorage implements FilmStorage{
     private int generatedId;
-    private Map<Integer, Film> filmMap;
+    final private Map<Integer, Film> filmMap;
 
     public InMemoryFilmStorage() {
         this.generatedId = 0;
@@ -30,7 +32,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     }
 
     public Film getFilmById(int id) {
-        Film film = null;
+        Film film;
         if (filmMap.containsKey(id)) {
             film = filmMap.get(id);
         } else {
@@ -65,7 +67,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     }
 
     public Film deleteFilmById(int id) {
-        Film film = null;
+        Film film;
         if (filmMap.containsKey(id)) {
             film = filmMap.get(id);
             filmMap.remove(id);
