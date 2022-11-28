@@ -7,6 +7,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.Set;
 
 @Data
 public class Film {
@@ -19,4 +21,7 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private int duration;
+    private Set<Integer> likes;
+
+    public static final Comparator<Film> COMPARE_BY_COUNT = Comparator.comparingInt(o -> o.getLikes().size());
 }
