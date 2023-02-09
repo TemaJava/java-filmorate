@@ -41,7 +41,7 @@ public class UserRepositoryImpl implements UserRepository {
                 .withTableName("users")
                 .usingGeneratedKeyColumns("user_id");
         SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("email", user.getEmail())
+                .addValue("emailname", user.getEmail())
                 .addValue("login", user.getLogin())
                 .addValue("name", user.getName())
                 .addValue("birthday", user.getBirthday());
@@ -64,16 +64,16 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> getFriends(int id) {
-        return jdbcTemplate.query("SELECT u.user_id, u.email, u.login, u.name, u.birthday " +
-                "FROM friendship AS f JOIN users AS u on u.user_id = f.friend_id " +
-                "WHERE f.user_id = ?", this::mapRowToUser, id);
+        return jdbcTemplate.query("SELECT u.user_id, u.EMAILNAME, u.login, u.name, u.birthday " +
+                "FROM friendship AS f JOIN users AS u on u.user_id = f.USER_1_ID " +
+                "WHERE f.USER_2_ID = ?", this::mapRowToUser, id);
     }
 
     @Override
     public List<User> getCommonFriends(int userId, int otherUserId) {
-        return jdbcTemplate.query("SELECT u.user_id, u.email, u.login, u.name, u.birthday " +
-                "FROM friendship AS f JOIN users AS u on u.user_id = f.friend_id " +
-                "WHERE f.user_id = ? AND f.friend_id IN (SELECT friend_id FROM friendship WHERE user_id = ?)",
+        return jdbcTemplate.query("SELECT u.user_id, u.EMAILNAME, u.login, u.name, u.birthday " +
+                "FROM friendship AS f JOIN users AS u on u.user_id = f.USER_2_ID " +
+                "WHERE f.USER_1_ID = ? AND f.USER_2_ID IN (SELECT USER_2_ID FROM friendship WHERE user_id = ?)",
                 this::mapRowToUser, userId, otherUserId);
     }
 
@@ -97,7 +97,7 @@ public class UserRepositoryImpl implements UserRepository {
     private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
         return User.builder()
                 .id(resultSet.getInt("user_id"))
-                .email(resultSet.getString("email"))
+                .email(resultSet.getString("emailname"))
                 .login(resultSet.getString("login"))
                 .name(resultSet.getString("name"))
                 .birthday(resultSet.getDate("birthday").toLocalDate())
