@@ -1,56 +1,104 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dto.UserDto;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.mapper.RawMapper;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.repository.interfaces.UserRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 @Slf4j
-public class UserService {
-    private int generatedId;
-    private Map<Integer, User> userMap;
+@Service
+@RequiredArgsConstructor
+public class UserService implements UserServiceInterface {
+    private final UserRepository userRepository;
+    private final RawMapper<UserDto, User> userDtoToUserMapper;
 
-    public UserService() {
-        this.generatedId = 0;
-        this.userMap = new HashMap<>();
+    @Override
+    public List<User> getAll() {
+        return userRepository.getAll();
     }
 
-    public User addUser(User user) {
-        loginValidation(user);
-        generatedId++;
-        user.setId(generatedId);
-        userMap.put(generatedId, user);
-        log.info("Пользователь успешно добавлен: {}", user);
-        return user;
+    @Override
+    public User getById(int id) {
+            return userRepository.getById(id);
     }
 
-    public User updateUser(User user) {
-        loginValidation(user);
-        if (userMap.containsKey(user.getId())) {
-            userMap.replace(user.getId(), user);
-            log.info("Пользователь успешно обновлен: {}", user);
-            return user;
+    @Override
+    public User addUser(UserDto dto) {
+        User newUser = userDtoToUserMapper.mapFrom(dto);
+        return userRepository.create(newUser);
+    }
+
+    @Override
+    public User updateUser(UserDto dto) {
+        User user = userDtoToUserMapper.mapFrom(dto);
+        if (userRepository.getById(user.getId()) == null) {
+            throw new NotFoundException("Такого пользователя не существует");
         } else {
-            log.error("Пользователь для обновления не найден: {}", user);
-            throw new RuntimeException("Пользователь для обновления не найден");
+            return userRepository.update(user);
         }
     }
 
-    public List<User> getAllUsers() {
-        return new ArrayList<>(userMap.values());
+    @Override
+    public User delete(int id) {
+        if (userRepository.getById(id) == null) {
+            throw new NotFoundException("Такого пользователя не существует");
+        } else {
+            User user = userRepository.getById(id);
+            userRepository.delete(id);
+            return user;
+        }
     }
 
-    public void loginValidation(User user) {
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
+    @Override
+    public void addFriend(int userId1, int userId2) {
+        if (userId1 == userId2) {
+            throw new RuntimeException("Человек не может добавить в друзья сам себя");
         }
-        if (user.getLogin().contains(" ") || user.getLogin() == null) {
-            log.error("Ошибка логина: {}", user.getLogin());
-            throw new ValidationException("Ошибка логина. Он не должен быть пустым или включать в себя пробелы");
+        if (userRepository.getById(userId1) == null || userRepository.getById(userId2) == null) {
+            throw new NotFoundException("Такого пользователя не существует");
         }
+        userRepository.addFriend(userId1, userId2);
+    }
+
+    @Override
+    public void deleteFriend(int userId1, int userId2) {
+            if (userId1 == userId2) {
+                throw new RuntimeException("Человек не может удалить из друзей сам себя");
+            }
+            if (userRepository.getById(userId1) == null || userRepository.getById(userId2) == null) {
+                throw new NotFoundException("Такого пользователя не существует");
+            }
+         userRepository.deleteFriend(userId1, userId2);
+
+    }
+
+    @Override
+    public List<User> getFriends(int id) {
+        if (userRepository.getById(id) == null) {
+            throw new NotFoundException("Такого пользователя не существует");
+        } else {
+            return userRepository.getFriends(id);
+        }
+    }
+
+    @Override
+    public List<User> getCommonFriends(int userId1, int userId2) {
+        if (userId1 == userId2) {
+            throw new RuntimeException("Ошибка - введен айди одного человека");
+        }
+        if (userRepository.getById(userId1) == null || userRepository.getById(userId2) == null) {
+            throw new NotFoundException("Такого пользователя не существует");
+        }
+
+        return userRepository.getCommonFriends(userId1, userId2);
     }
 }
+
