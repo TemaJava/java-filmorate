@@ -3,106 +3,102 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.mapper.RawMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.repository.interfaces.UserRepository;
 
-import java.lang.reflect.Array;
+
 import java.util.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserServiceInterface {
-    private final InMemoryUserStorage storage;
-    public User addUser(User user) {
-        return storage.addUser(user);
+    private final UserRepository userRepository;
+    private final RawMapper<UserDto, User> userDtoToUserMapper;
+
+    @Override
+    public List<User> getAll() {
+        return userRepository.getAll();
     }
 
-    public User updateUser(User user) {
-        return storage.updateUser(user);
+    @Override
+    public User getById(int id) {
+            return userRepository.getById(id);
     }
 
-    public List<User> getAllUsers() {
-        Map<Integer, User> userMap = storage.getAllUsers();
-        return new ArrayList<>(userMap.values());
+    @Override
+    public User addUser(UserDto dto) {
+        User newUser = userDtoToUserMapper.mapFrom(dto);
+        return userRepository.create(newUser);
     }
 
-    public User getUserById(int id) {
-        if (storage.getAllUsers().containsKey(id)) {
-            return storage.getUserById(id);
+    @Override
+    public User updateUser(UserDto dto) {
+        User user = userDtoToUserMapper.mapFrom(dto);
+        if (userRepository.getById(user.getId()) == null) {
+            throw new NotFoundException("Такого пользователя не существует");
         } else {
-            log.error("Не найден пользователь с id {}", id);
-            throw new NotFoundException("Пользователь с id " + id  + " не найден");
+            return userRepository.update(user);
         }
-    }
-    public List<User> addFriend(int firstId, int secondId) {
-        if (!storage.getAllUsers().containsKey(firstId) || !storage.getAllUsers().containsKey(secondId)) {
-            log.error("Не найден пользователь с id: {} или {}", firstId, secondId);
-            throw new NotFoundException("Не найден пользователь с id" + firstId + " или " + secondId);
-        }
-        if (storage.getUserById(firstId).getFriends().contains(secondId)) {
-            log.error("Пользователи с id: {} и {} уже друзья", firstId, secondId);
-            throw new RuntimeException("Пользователи с id" + firstId + " и " + secondId + " уже друзья");
-        }
-        storage.getUserById(firstId).getFriends().add(secondId);
-        storage.getUserById(secondId).getFriends().add(firstId);
-        log.info("Пользователи {} и {} добавлены в друзья", storage.getUserById(firstId),
-                storage.getUserById(secondId));
-        return Arrays.asList(storage.getUserById(firstId), storage.getUserById(secondId));
     }
 
-    public List<User> deleteFriend(int firstId, int secondId) {
-        if (!storage.getAllUsers().containsKey(firstId) || !storage.getAllUsers().containsKey(secondId)) {
-            log.error("Не найден пользователь с id: {} или {}", firstId, secondId);
-            throw new NotFoundException("Не найден пользователь с id" + firstId + " или " + secondId);
-        }
-        if (!storage.getUserById(firstId).getFriends().contains(secondId)) {
-            log.error("Пользователи с id: {} и {} уже не являются друзьями", firstId, secondId);
-            throw new RuntimeException("Пользователи с id" + firstId + " и " +
-                    secondId + " уже не являются друзьями");
-        }
-        storage.getUserById(firstId).getFriends().remove(secondId);
-        storage.getUserById(secondId).getFriends().remove(firstId);
-        log.info("Пользователи {} и {} удалены из друзей",
-                storage.getUserById(firstId), storage.getUserById(secondId));
-        return Arrays.asList(storage.getUserById(firstId), storage.getUserById(secondId));
-    }
-
-    public List<User> getUserFriends(int id) {
-        if (storage.getAllUsers().containsKey(id)) {
-            List<User> friends = new ArrayList<>();
-            for (Integer friend : storage.getUserById(id).getFriends()) {
-                friends.add(storage.getUserById(friend));
-            }
-            return friends;
+    @Override
+    public User delete(int id) {
+        if (userRepository.getById(id) == null) {
+            throw new NotFoundException("Такого пользователя не существует");
         } else {
-            log.error("Не найден пользователь с id {}", id);
-            throw new NotFoundException("Пользователь с id " + id  + " не найден");
+            User user = userRepository.getById(id);
+            userRepository.delete(id);
+            return user;
         }
     }
 
-    public List<User> getAllCommonFriends(int firstId, int secondId) {
-        if (!storage.getAllUsers().containsKey(firstId) || !storage.getAllUsers().containsKey(secondId)) {
-            log.error("Не найден пользователь с id: {} или {}", firstId, secondId);
-            throw new NotFoundException("Не найден пользователь с id" + firstId + " или " + secondId);
+    @Override
+    public void addFriend(int userId1, int userId2) {
+        if (userId1 == userId2) {
+            throw new RuntimeException("Человек не может добавить в друзья сам себя");
         }
-        if (storage.getUserById(firstId).getFriends().size()==0 ||
-                storage.getUserById(secondId).getFriends().size() == 0) {
-                return new ArrayList<>();
+        if (userRepository.getById(userId1) == null || userRepository.getById(userId2) == null) {
+            throw new NotFoundException("Такого пользователя не существует");
         }
-        List<Integer> firstFriends = new ArrayList<>(storage.getUserById(firstId).getFriends());
-        List<Integer> secondFriends = new ArrayList<>(storage.getUserById(secondId).getFriends());
-        List<User> commonFriends = new ArrayList<>();
-        for (Integer friendId : firstFriends) {
-            if (secondFriends.contains(friendId)) {
-                commonFriends.add(storage.getUserById(friendId));
+        userRepository.addFriend(userId1, userId2);
+    }
+
+    @Override
+    public void deleteFriend(int userId1, int userId2) {
+            if (userId1 == userId2) {
+                throw new RuntimeException("Человек не может удалить из друзей сам себя");
             }
+            if (userRepository.getById(userId1) == null || userRepository.getById(userId2) == null) {
+                throw new NotFoundException("Такого пользователя не существует");
+            }
+         userRepository.deleteFriend(userId1, userId2);
+
+    }
+
+    @Override
+    public List<User> getFriends(int id) {
+        if (userRepository.getById(id) == null) {
+            throw new NotFoundException("Такого пользователя не существует");
+        } else {
+            return userRepository.getFriends(id);
         }
-        log.info("Список общих друзей: " + commonFriends);
-        return commonFriends;
+    }
+
+    @Override
+    public List<User> getCommonFriends(int userId1, int userId2) {
+        if (userId1 == userId2) {
+            throw new RuntimeException("Ошибка - введен айди одного человека");
+        }
+        if (userRepository.getById(userId1) == null || userRepository.getById(userId2) == null) {
+            throw new NotFoundException("Такого пользователя не существует");
+        }
+
+        return userRepository.getCommonFriends(userId1, userId2);
     }
 }
 

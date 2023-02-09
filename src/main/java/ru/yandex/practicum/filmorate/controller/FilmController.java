@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import ru.yandex.practicum.filmorate.dto.FilmDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -34,18 +35,23 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film createFilm(@Validated @RequestBody Film film) {
+    public Film createFilm(@Validated @RequestBody FilmDto film) {
         return service.addFilm(film);
     }
 
     @PutMapping
-    public Film updateFilm(@Validated @RequestBody Film film) {
+    public Film updateFilm(@Validated @RequestBody FilmDto film) {
         return service.updateFilm(film);
     }
 
     @PutMapping("/{id}/like/{userId}")
     public Film addLike(@PathVariable int id, @PathVariable int userId) {
         return service.addLike(id, userId);
+    }
+
+    @DeleteMapping("/{id}")
+    public Film deleteFilm(@PathVariable int id) {
+        return service.delete(id);
     }
 
     @DeleteMapping("/{id}/like/{userId}")

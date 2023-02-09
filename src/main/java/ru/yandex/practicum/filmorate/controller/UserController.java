@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -23,42 +24,42 @@ public class UserController {
 
     @GetMapping
     public List<User> getAllUsers() {
-        return service.getAllUsers();
+        return service.getAll();
     }
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable int id) {
-        return service.getUserById(id);
+        return service.getById(id);
     }
 
     @GetMapping("/{id}/friends")
     public List<User> getUserFriends(@PathVariable int id) {
-        return service.getUserFriends(id);
+        return service.getFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
-        return service.getAllCommonFriends(id, otherId);
+        return service.getCommonFriends(id, otherId);
     }
 
     @PostMapping
-    public User createUser(@Validated @RequestBody User user) {
-        return service.addUser(user);
+    public User createUser(@Validated @RequestBody UserDto userDto) {
+        return service.addUser(userDto);
     }
 
     @PutMapping
-    public User updateUser(@Validated @RequestBody User user) {
-        return service.updateUser(user);
+    public User updateUser(@Validated @RequestBody UserDto  userDto) {
+        return service.updateUser(userDto);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public List<User> addFriend(@PathVariable int id, @PathVariable int friendId) {
-        return service.addFriend(id, friendId);
+    public void addFriend(@PathVariable int id, @PathVariable int friendId) {
+        service.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public List<User> deleteFriend(@PathVariable int id, @PathVariable int friendId) {
-        return service.deleteFriend(id, friendId);
+    public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
+        service.deleteFriend(id, friendId);
     }
 
     @ExceptionHandler
