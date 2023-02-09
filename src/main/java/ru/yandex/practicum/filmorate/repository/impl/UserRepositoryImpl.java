@@ -81,8 +81,8 @@ public class UserRepositoryImpl implements UserRepository {
     public void addFriend(int userId, int friendId) {
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("friendship");
         SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("user_id", userId)
-                .addValue("friend_id", friendId);
+                .addValue("user_1_id", userId)
+                .addValue("user_2_id", friendId);
         simpleJdbcInsert.execute(parameters);
     }
 
