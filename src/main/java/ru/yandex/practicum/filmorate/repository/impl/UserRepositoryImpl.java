@@ -64,9 +64,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> getFriends(int id) {
-        return jdbcTemplate.query("SELECT u.user_id, u.EMAILNAME, u.login, u.name, u.birthday " +
-                "FROM friendship AS f JOIN users AS u on u.user_id = f.USER_1_ID " +
-                "WHERE f.USER_2_ID = ?", this::mapRowToUser, id);
+        return jdbcTemplate.query("SELECT USER_2_ID FROM FRIENDSHIP WHERE USER_1_ID = ?", this::mapRowToUser, id);
     }
 
     @Override
@@ -78,12 +76,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void addFriend(int userId, int friendId) {
-        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("friendship");
-        SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("user_1_id", userId)
-                .addValue("user_2_id", friendId);
-        simpleJdbcInsert.execute(parameters);
+    public void addFriend(int user1Id, int user2id) {
+        jdbcTemplate.update(
+                "INSERT INTO FRIENDSHIP (USER_1_ID, USER_2_ID) " +
+                        "VALUES (?,?)",
+                user1Id, user2id);
     }
 
     @Override
@@ -93,7 +90,7 @@ public class UserRepositoryImpl implements UserRepository {
                 "WHERE " +
                 "user_1_id = ? AND user_2_id = ? ", userId, friendId);
     }
-
+    
     private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
         return User.builder()
                 .id(resultSet.getInt("user_id"))

@@ -27,7 +27,10 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public User getById(int id) {
-            return userRepository.getById(id);
+        if (userRepository.getById(id) == null) {
+            throw new NotFoundException("пользователь не найден");
+        }
+        return userRepository.getById(id);
     }
 
     @Override
