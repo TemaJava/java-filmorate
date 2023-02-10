@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
+@Builder
 public class User {
     @PositiveOrZero
     private int id;
