@@ -64,22 +64,28 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> getFriends(int id) {
-        return jdbcTemplate.query("SELECT USER_2_ID FROM FRIENDSHIP WHERE USER_1_ID = ?", this::mapRowToUser, id);
+        return jdbcTemplate.query("SELECT USERS.USER_ID, EMAILNAME, login, name, birthday  FROM USERS " +
+                "LEFT JOIN friendship f on users.USER_ID = f.USER_2_ID where f.USER_1_ID = ?", this::mapRowToUser, id);
     }
 
     @Override
-    public List<User> getCommonFriends(int userId, int otherUserId) {
-        return jdbcTemplate.query("SELECT u.user_id, u.EMAILNAME, u.login, u.name, u.birthday " +
-                "FROM friendship AS f JOIN users AS u on u.user_id = f.USER_2_ID " +
-                "WHERE f.USER_1_ID = ? AND f.USER_2_ID IN (SELECT USER_2_ID FROM friendship WHERE user_id = ?)",
-                this::mapRowToUser, userId, otherUserId);
+    public List<User> getCommonFriends(int user1Id, int user2Id) {
+        return jdbcTemplate.query("SELECT u.USER_ID, EMAILNAME, login, name, birthday " +
+                        "FROM friendship AS f " +
+                        "LEFT JOIN users u ON u.USER_ID = f.USER_2_ID " +
+                        "WHERE f.USER_1_ID = ? AND f.USER_2_ID IN ( " +
+                        "SELECT f.USER_2_ID " +
+                        "FROM friendship AS f " +
+                        "LEFT JOIN users AS u ON u.USER_ID = f.USER_2_ID " +
+                        "WHERE f.USER_1_ID = ? )",
+                this::mapRowToUser, user1Id, user2Id);
     }
 
     @Override
     public void addFriend(int user1Id, int user2id) {
         jdbcTemplate.update(
-                "INSERT INTO FRIENDSHIP (USER_1_ID, USER_2_ID) " +
-                        "VALUES (?,?)",
+                "MERGE INTO FRIENDSHIP (USER_1_ID, USER_2_ID) " +
+                        "VALUES (?, ?)",
                 user1Id, user2id);
     }
 
