@@ -1,16 +1,18 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.repository;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
 
-public interface FilmServiceInterface {
-    Film addFilm(Film film);
+public interface FilmRepository {
+    Film create(Film film);
     Film update(Film film);
-    Film getFilmById(int id);
     List<Film> getAllFilms();
+    Film getById(int id);
     Film deleteFilmById(int id);
+    List<Film> getPopularFilms(int num);
     Film addLike(int filmId, int userId);
     Film deleteLike(int filmId, int userId);
-    List<Film> getPopularFilms(int num);
+
+
 }

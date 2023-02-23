@@ -1,17 +1,14 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.impl.UserService;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -21,14 +18,29 @@ import java.util.Map;
 public class UserController {
     private final UserService service;
 
-    @GetMapping
-    public List<User> getAllUsers() {
-        return service.getAllUsers();
+    @PostMapping
+    public User createUser(@Validated @RequestBody User user) {
+        return service.addUser(user);
+    }
+
+    @PutMapping
+    public User updateUser(@Validated @RequestBody User user) {
+        return service.updateUser(user);
     }
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable int id) {
         return service.getUserById(id);
+    }
+
+    @GetMapping
+    public List<User> getAllUsers() {
+        return service.getAllUsers();
+    }
+
+    @DeleteMapping("/{id}")
+    public User deleteById(@PathVariable int id) {
+        return service.deleteUserById(id);
     }
 
     @GetMapping("/{id}/friends")
@@ -39,16 +51,6 @@ public class UserController {
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
         return service.getAllCommonFriends(id, otherId);
-    }
-
-    @PostMapping
-    public User createUser(@Validated @RequestBody User user) {
-        return service.addUser(user);
-    }
-
-    @PutMapping
-    public User updateUser(@Validated @RequestBody User user) {
-        return service.updateUser(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")

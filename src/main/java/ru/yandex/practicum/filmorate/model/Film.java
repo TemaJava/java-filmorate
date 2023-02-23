@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
@@ -8,9 +8,14 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Film {
     @PositiveOrZero
     private int id;
@@ -21,7 +26,8 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private int duration;
-    private Set<Integer> likes;
-
-    public static final Comparator<Film> COMPARE_BY_COUNT = Comparator.comparingInt(o -> o.getLikes().size());
+    private Mpa mpa;
+    private List<Genre> genres;
+    //убрали поле лайков, потому что теперь информация хранится в бд
+    //компаратор тоже не нужен благодаря запросам
 }

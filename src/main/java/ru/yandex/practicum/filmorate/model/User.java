@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
+import lombok.*;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Email;
@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Set;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
     @PositiveOrZero
     private int id;
@@ -22,5 +25,5 @@ public class User {
     private String name;
     @Past
     private LocalDate birthday;
-    private Set<Integer> friends;
+    //убрали поле друзей, потому что теперь информация хранится в бд
 }
