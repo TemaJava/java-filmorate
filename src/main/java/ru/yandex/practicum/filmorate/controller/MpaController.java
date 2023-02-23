@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/mpa")
 public class MpaController {
-    private MpaService service;
+    private final MpaService service;
 
     @GetMapping("/{id}")
     public Mpa getMpaById(@PathVariable int id) {

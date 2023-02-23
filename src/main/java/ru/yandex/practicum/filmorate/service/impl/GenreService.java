@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class GenreService implements GenreServiceInterface {
-    private GenreRepository genreRepository;
+    private final GenreRepository genreRepository;
 
     public Genre getGenreById(int id) {
         return genreRepository.getGenreById(id);

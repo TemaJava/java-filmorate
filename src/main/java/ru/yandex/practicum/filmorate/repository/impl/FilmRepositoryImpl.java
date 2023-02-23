@@ -57,14 +57,15 @@ public class FilmRepositoryImpl implements FilmRepository {
         String queryInsertGenres = "INSERT INTO film_genre (film_id, genre_id) VALUES (?, ?) ";
         String queryValidationGenre = "SELECT * FROM film_genre WHERE film_id = ? AND genre_id = ?";
         jdbcTemplate.update(queryInsertMpa, filmId, film.getMpa().getId());
-        for (Genre g : film.getGenres()) {
-            //Проверка необходима, чтобы жанры добавлялись без дубликатов
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(queryValidationGenre, filmId, g.getId());
-            if (!rowSet.next()) {
-                jdbcTemplate.update(queryInsertGenres, filmId, g.getId());
+        if (film.getGenres() != null) {
+            for (Genre g : film.getGenres()) {
+                //Проверка необходима, чтобы жанры добавлялись без дубликатов
+                SqlRowSet rowSet = jdbcTemplate.queryForRowSet(queryValidationGenre, filmId, g.getId());
+                if (!rowSet.next()) {
+                    jdbcTemplate.update(queryInsertGenres, filmId, g.getId());
+                }
             }
         }
-
         //передаем в поля фильма ссылки на его атрибуты
         film.setMpa(getMpaFromBd(filmId));
         film.setGenres(getGenresFromBd(filmId));

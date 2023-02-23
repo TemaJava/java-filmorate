@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.service.FilmServiceInterface;
 
 import java.util.*;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FilmService implements FilmServiceInterface {

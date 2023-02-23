@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.repository.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
@@ -16,6 +17,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MpaRepositoryImpl implements MpaRepository {
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public MpaRepositoryImpl(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Override
     public Mpa getMpaById(int id) {

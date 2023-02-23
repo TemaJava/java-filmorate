@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/genres")
 public class GenreController {
-    private GenreService service;
+    private final GenreService service;
 
     @GetMapping("/{id}")
     public Genre getGenreById(@PathVariable int id) {
