@@ -38,6 +38,10 @@ public class FilmRepositoryImpl implements FilmRepository {
     //используя пример springframework.guru
     @Override
     public Film create(Film film) {
+        if (Date.valueOf(film.getReleaseDate()).after(new Date(1895-12-28))) {
+            throw new ValidationException("Ошибка даты добавления фильма");
+        }
+
         String queryToCreateFilm = "INSERT INTO films (name, description, release_date, duration) " +
                 "VALUES (?, ?, ?, ?)";
 
@@ -47,9 +51,6 @@ public class FilmRepositoryImpl implements FilmRepository {
             PreparedStatement stmt = con.prepareStatement(queryToCreateFilm, new String[]{"id"});
             stmt.setString(1, film.getName());
             stmt.setString(2, film.getDescription());
-            if (Date.valueOf(film.getReleaseDate()).after(new Date(1895-12-28))) {
-                throw new ValidationException("Ошибка даты добавления фильма");
-            }
             stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
             stmt.setInt(4, film.getDuration());
             return stmt;
@@ -80,6 +81,9 @@ public class FilmRepositoryImpl implements FilmRepository {
     @Override
     public Film update(Film film) {
         validateFilm(film.getId());
+        if (Date.valueOf(film.getReleaseDate()).after(new Date(1895-12-28))) {
+            throw new ValidationException("Ошибка даты добавления фильма");
+        }
 
         String queryUpdateFlm = "UPDATE films SET name = ?, description = ?, " +
                 "release_date = ?, duration = ? WHERE id = ?";
