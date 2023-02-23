@@ -35,7 +35,7 @@ public class MpaRepositoryImpl implements MpaRepository {
     }
 
     private Mpa createMpaFromRow(ResultSet resultSet, int row) throws SQLException {
-        int id = resultSet.getInt("id");
+        int id = resultSet.getInt("mpa_id");
         String name = resultSet.getString("name");
         return new Mpa(id, name);
     }

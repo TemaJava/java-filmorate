@@ -36,7 +36,7 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     private Genre createGenreFromRow(ResultSet resultSet, int row) throws SQLException {
-        int id = resultSet.getInt("id");
+        int id = resultSet.getInt("genre_id");
         String name = resultSet.getString("name");
         return new Genre(id, name);
     }

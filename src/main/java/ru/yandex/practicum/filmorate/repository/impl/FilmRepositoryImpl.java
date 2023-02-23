@@ -8,6 +8,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -19,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,6 +47,9 @@ public class FilmRepositoryImpl implements FilmRepository {
             PreparedStatement stmt = con.prepareStatement(queryToCreateFilm, new String[]{"id"});
             stmt.setString(1, film.getName());
             stmt.setString(2, film.getDescription());
+            if (Date.valueOf(film.getReleaseDate()).after(new Date(1895-31-28))) {
+                throw new ValidationException("Ошибка даты добавления фильма");
+            }
             stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
             stmt.setInt(4, film.getDuration());
             return stmt;
@@ -135,9 +140,9 @@ public class FilmRepositoryImpl implements FilmRepository {
 
     @Override
     public List<Film> getPopularFilms(int num) {
-        String query = "SELECT f.name, description, release_date, duration FROM FILMS AS f " +
+        String query = "SELECT id, f.name, description, release_date, duration FROM FILMS AS f " +
                 "LEFT JOIN film_likes AS fl on f.ID = fl.FILM_ID GROUP BY f.id, fl.film_id IN " +
-                "(SELECT film_id FROM fl) ORDER BY COUNT(fl.film_id) DESC LIMIT ?";
+                "(SELECT film_id FROM film_likes) ORDER BY COUNT(fl.film_id) DESC LIMIT ?";
         return jdbcTemplate.query(query, this::createFilmFromRow, num);
     }
 

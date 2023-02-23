@@ -40,6 +40,7 @@ public class UserRepositoryImpl implements UserRepository {
             stmt.setString(2, user.getLogin());
             if (user.getName().isBlank()) {
                 stmt.setString(3, user.getLogin());
+                user.setName(user.getLogin());
             } else {
                 stmt.setString(3, user.getName());
             }
