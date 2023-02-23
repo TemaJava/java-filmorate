@@ -38,7 +38,7 @@ public class FilmRepositoryImpl implements FilmRepository {
     //используя пример springframework.guru
     @Override
     public Film create(Film film) {
-        if (Date.valueOf(film.getReleaseDate()).before(new Date(1895-12-28))) {
+        if (Date.valueOf(film.getReleaseDate()).after(new Date(1895-12-28))) {
             throw new ValidationException("Ошибка даты добавления фильма");
         }
 
