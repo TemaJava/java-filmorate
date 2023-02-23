@@ -47,7 +47,7 @@ public class FilmRepositoryImpl implements FilmRepository {
             PreparedStatement stmt = con.prepareStatement(queryToCreateFilm, new String[]{"id"});
             stmt.setString(1, film.getName());
             stmt.setString(2, film.getDescription());
-            if (Date.valueOf(film.getReleaseDate()).before(new Date(1895-12-28))) {
+            if (Date.valueOf(film.getReleaseDate()).after(new Date(1895-12-28))) {
                 throw new ValidationException("Ошибка даты добавления фильма");
             }
             stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
