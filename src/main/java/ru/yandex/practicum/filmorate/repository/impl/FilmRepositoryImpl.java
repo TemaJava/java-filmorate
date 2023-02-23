@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.repository.impl;
 
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -38,7 +39,7 @@ public class FilmRepositoryImpl implements FilmRepository {
     //используя пример springframework.guru
     @Override
     public Film create(Film film) {
-        if (!Date.valueOf(film.getReleaseDate()).after(new Date(1895-12-28))) {
+        if (!(film.getReleaseDate()).isAfter(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Ошибка даты добавления фильма");
         }
 
@@ -81,7 +82,7 @@ public class FilmRepositoryImpl implements FilmRepository {
     @Override
     public Film update(Film film) {
         validateFilm(film.getId());
-       if (!Date.valueOf(film.getReleaseDate()).after(new Date(1895-12-28))) {
+        if (!(film.getReleaseDate()).isAfter(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Ошибка даты добавления фильма");
         }
 
