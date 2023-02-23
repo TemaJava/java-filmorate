@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.impl.FilmService;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -19,12 +20,12 @@ public class FilmController {
     private final FilmService service;
 
     @PostMapping
-    public Film createFilm(@Validated @RequestBody Film film) {
+    public Film createFilm(@Valid @RequestBody Film film) {
         return service.addFilm(film);
     }
 
     @PutMapping
-    public Film updateFilm(@Validated @RequestBody Film film) {
+    public Film updateFilm(@Valid @RequestBody Film film) {
         return service.update(film);
     }
 

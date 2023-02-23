@@ -107,7 +107,7 @@ public class UserRepositoryImpl implements UserRepository {
         validationUser(id);
         return jdbcTemplate.query("SELECT id, email, login, name, birthday FROM users AS u " +
                 "LEFT JOIN friendship as f ON u.id = f.friend_id " +
-                "WHERE user_id = ? AND confirmed = true", this::createUserFromRow, id);
+                "WHERE user_id = ?", this::createUserFromRow, id);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class UserRepositoryImpl implements UserRepository {
         validationUser(user2Id);
         String query = "SELECT id, email, login, name, birthday FROM friendship AS fs " +
                 "LEFT JOIN users AS u ON u.id = fs.friend_id " +
-                "WHERE fs.user_id AND fs.friend_id IN (SELECT friend_id " +
+                "WHERE fs.user_id = ? AND fs.friend_id IN (SELECT friend_id " +
                 "FROM friendship AS fs LEFT JOIN users AS u ON u.id = fs.friend_id " +
                 "WHERE fs.user_id = ?)";
         return jdbcTemplate.query(query, this::createUserFromRow, userId, user2Id);
@@ -127,7 +127,7 @@ public class UserRepositoryImpl implements UserRepository {
         String email = resultSet.getString("email");
         String login = resultSet.getString("login");
         LocalDate birthday = resultSet.getDate("birthday").toLocalDate();
-        return new User(id, name, email, login, birthday);
+        return new User(id, email, login, name, birthday);
     }
 
     //валидация по аналогии с репозиторием фильмов
