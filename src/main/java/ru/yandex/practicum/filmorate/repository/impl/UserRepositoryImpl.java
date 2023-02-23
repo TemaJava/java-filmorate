@@ -38,10 +38,15 @@ public class UserRepositoryImpl implements UserRepository {
             final PreparedStatement stmt = con.prepareStatement(queryCreateUser, new String[]{"id"});
             stmt.setString(1, user.getEmail());
             stmt.setString(2, user.getLogin());
-            stmt.setString(3, user.getName());
+            if (user.getName().isBlank()) {
+                stmt.setString(3, user.getLogin());
+            } else {
+                stmt.setString(3, user.getName());
+            }
             stmt.setDate(4, Date.valueOf(user.getBirthday()));
             return stmt;
         }, keyHolder);
+
 
         user.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
         return user;
@@ -51,6 +56,9 @@ public class UserRepositoryImpl implements UserRepository {
     public User update(User user) {
         validationUser(user.getId());
         String queryUpdate = "UPDATE users SET email = ?, login = ?, name = ?, birthday = ? WHERE id = ?";
+        if (user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         jdbcTemplate.update(queryUpdate, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(),
                 user.getId());
         return user;
