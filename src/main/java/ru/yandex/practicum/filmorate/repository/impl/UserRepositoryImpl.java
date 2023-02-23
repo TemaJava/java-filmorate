@@ -36,9 +36,9 @@ public class UserRepositoryImpl implements UserRepository {
 
         jdbcTemplate.update(con -> {
             final PreparedStatement stmt = con.prepareStatement(queryCreateUser, new String[]{"id"});
-            stmt.setString(1, user.getLogin());
-            stmt.setString(2, user.getName());
-            stmt.setString(3, user.getEmail());
+            stmt.setString(1, user.getEmail());
+            stmt.setString(2, user.getLogin());
+            stmt.setString(3, user.getName());
             stmt.setDate(4, Date.valueOf(user.getBirthday()));
             return stmt;
         }, keyHolder);
