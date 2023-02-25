@@ -3,6 +3,7 @@ Template repository for Filmorate project.
 ![image](https://user-images.githubusercontent.com/101995680/221371031-7294c030-c163-440d-9336-fbd49523c639.png)
 
 // Creating tables
+
 Table users {
   id int [pk, increment]
   email varchar [not null]
