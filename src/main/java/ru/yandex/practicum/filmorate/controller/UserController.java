@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.impl.UserService;
+import ru.yandex.practicum.filmorate.service.impl.UserServiceImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-    private final UserService service;
+    private final UserServiceImpl service;
 
     @PostMapping
     public User createUser(@Validated @RequestBody User user) {

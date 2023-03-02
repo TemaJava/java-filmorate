@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.service.impl.MpaService;
+import ru.yandex.practicum.filmorate.service.impl.MpaServiceImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +14,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/mpa")
 public class MpaController {
-    private final MpaService service;
+    private final MpaServiceImpl service;
 
     @GetMapping("/{id}")
     public Mpa getMpaById(@PathVariable int id) {

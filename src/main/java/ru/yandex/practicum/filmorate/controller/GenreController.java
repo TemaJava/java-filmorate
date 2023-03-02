@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.service.impl.GenreService;
+import ru.yandex.practicum.filmorate.service.impl.GenreServiceImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +14,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/genres")
 public class GenreController {
-    private final GenreService service;
+    private final GenreServiceImpl service;
 
     @GetMapping("/{id}")
     public Genre getGenreById(@PathVariable int id) {

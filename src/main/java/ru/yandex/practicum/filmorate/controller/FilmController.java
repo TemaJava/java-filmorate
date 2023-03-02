@@ -2,12 +2,11 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.impl.FilmService;
+import ru.yandex.practicum.filmorate.service.impl.FilmServiceImpl;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/films")
 public class FilmController {
-    private final FilmService service;
+    private final FilmServiceImpl service;
 
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film) {
